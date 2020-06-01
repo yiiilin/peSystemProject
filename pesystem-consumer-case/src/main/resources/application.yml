@@ -22,10 +22,10 @@ eureka:
 aliyun:
   oss:
     file:
-      endpoint: ###########
-      keyid: ############
-      keysecret: ##########
-      bucketname: ##########
+      endpoint: ############
+      keyid: #############
+      keysecret: ###########
+      bucketname: ###########
 
 ---
 spring:
