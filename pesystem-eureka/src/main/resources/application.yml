@@ -1,0 +1,25 @@
+server:
+  port: 4001
+spring:
+  profiles:
+    active: dev
+eureka:
+  instance:
+    instance-id: eureka-${server.port}
+  client:
+    fetch-registry: false
+    register-with-eureka: false
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+---
+spring:
+  profiles: dev
+eureka:
+  instance:
+    hostname: 127.0.0.1
+---
+spring:
+  profiles: test
+eureka:
+  instance:
+    hostname: 192.168.0.49

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis3.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fzn.pesystem.provider.dao.UserDao">
+    <resultMap id="userMap" type="com.fzn.pesystem.common.entities.User">
+        <id property="uid" column="uid"/>
+        <result property="password" column="password"/>
+        <result property="name" column="name"/>
+        <result property="phone" column="phone"/>
+        <result property="departId" column="depart_id"/>
+        <result property="topDepartId" column="top_depart_id"/>
+        <result property="score" column="score"/>
+    </resultMap>
+    <sql id="userAll">
+        uid, password, name, phone, depart_id, top_depart_id, score
+    </sql>
+    <insert id="insertUser">
+        insert into t_user
+        (
+        <include refid="userAll" />
+        )
+        value
+        (
+        #{uid},#{password},#{name},#{phone},#{departId},#{topDepartId},#{score}
+        )
+
+    </insert>
+    <insert id="insertUserRole">
+        insert into t_user_role
+        (uid,role_id)
+        value
+        (#{uid},#{roleId})
+    </insert>
+    <update id="updatePasswordByUid">
+        update t_user tu
+        set tu.password=#{newPassword}
+        <where>
+            tu.uid=#{uid}
+        </where>
+    </update>
+    <update id="updateInfoByUid">
+        update t_user tu
+        <trim prefix="set" suffixOverrides=",">
+            tu.name=#{name},
+            tu.phone=#{phone},
+            tu.depart_id=#{departId},
+        </trim>
+    </update>
+    <update id="updateRoleByUid">
+        update t_user_role tur
+        <trim prefix="set">
+            tur.role_id=#{roleId}
+        </trim>
+        <where>
+            tur.uid=#{uid}
+        </where>
+    </update>
+    <delete id="deleteUser">
+        delete t_user tu
+        <where>
+            tu.uid=#{uid}
+        </where>
+    </delete>
+    <select id="existUser" resultType="java.lang.Boolean">
+        select count(1) from t_user tu
+        <where>
+            tu.uid=#{uid}
+        </where>
+    </select>
+    <select id="getUserPasswordByUid" resultType="java.lang.String">
+        select tu.password from t_user tu
+        <where>
+            tu.uid=#{uid}
+        </where>
+    </select>
+    <select id="getRoleCodeByRoleId" resultType="java.lang.String">
+        select tr.role_code from t_role tr
+        <where>
+            tr.role_id=#{roleId}
+        </where>
+    </select>
+</mapper>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis3.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fzn.pesystem.uaa.dao.RBACDao">
+    <resultMap id="UserMap" type="com.fzn.pesystem.common.entities.User">
+        <id property="uid" column="uid"/>
+        <result property="password" column="password"/>
+        <result property="name" column="name"/>
+        <result property="phone" column="phone"/>
+        <result property="departId" column="depart_id"/>
+        <result property="topDepartId" column="top_depart_id"/>
+        <result property="score" column="score"/>
+    </resultMap>
+    <sql id="userAll">
+        uid, password, name, phone, depart_id, top_depart_id, score
+    </sql>
+    <select id="getRoleCodeByUid" resultType="java.lang.String">
+        select tr.role_code from t_role tr
+        <where>
+            tr.role_id in
+            (
+            select tur.role_id from t_user_role tur
+            <where>
+                tur.uid =#{uid}
+            </where>
+            )
+        </where>
+    </select>
+    <select id="getUserByUid" parameterType="java.lang.String"
+            resultMap="UserMap">
+        select
+        <include refid="userAll" />
+        from t_user tu
+        <where>
+            tu.uid=#{uid}
+        </where>
+    </select>
+    <select id="getAuthorityByRoleCode" resultType="java.lang.String">
+        select ta.authority_code from t_authority ta
+        <where>
+            ta.authority_id in
+            (
+                select tra.authority_id from t_role_authority tra
+                <where>
+                    tra .role_id =
+                    (
+                        select tr.role_id from t_role tr
+                        <where>
+                           tr.role_code =#{roleCode}
+                        </where>
+                    )
+                </where>
+            )
+        </where>
+    </select>
+    <select id="getDepartNameByDepartId" resultType="java.lang.String">
+        select depart_name from t_depart
+        <where>
+            depart_id=#{departId}
+        </where>
+    </select>
+</mapper>

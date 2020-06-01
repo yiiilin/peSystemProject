@@ -1,0 +1,40 @@
+server:
+  port: 8001
+spring:
+  profiles:
+    active: dev
+  application:
+    name: SERVICE-USER
+feign:
+  hystrix:
+    enabled: true
+hystrix:
+  metrics:
+    enabled: true
+    polling-interval-ms: 1000
+eureka:
+  instance:
+    instance-id: user-${server.port}
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+
+---
+spring:
+  profiles: dev
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:4001/eureka
+swagger:
+  auth_server: http://localhost:7001/api/uaa/oauth/token
+---
+spring:
+  profiles: test
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://192.168.0.49:4001/eureka
+swagger:
+  auth_server: http://linaxhua.cn:7001/api/uaa/oauth/token

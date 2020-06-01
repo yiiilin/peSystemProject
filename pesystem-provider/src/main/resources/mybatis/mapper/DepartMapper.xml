@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis3.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fzn.pesystem.provider.dao.DepartDao">
+
+    <resultMap id="departMap" type="com.fzn.pesystem.common.entities.Depart">
+        <id property="departId" column="depart_id"/>
+        <result property="parentDepartId" column="parent_depart_id"/>
+        <result property="departName" column="depart_name"/>
+        <result property="departInfo" column="depart_info"/>
+        <result property="departAddress" column="depart_address"/>
+        <result property="departAdminId" column="depart_admin_id"/>
+    </resultMap>
+
+    <resultMap id="userMap" type="com.fzn.pesystem.common.entities.User">
+        <id property="uid" column="uid"/>
+        <result property="password" column="password"/>
+        <result property="name" column="name"/>
+        <result property="phone" column="phone"/>
+        <result property="departId" column="depart_id"/>
+        <result property="topDepartId" column="top_depart_id"/>
+        <result property="score" column="score"/>
+    </resultMap>
+
+    <resultMap id="perfromMap" type="com.fzn.pesystem.common.entities.Perform">
+        <id property="performId" column="perform_id"/>
+        <result property="uid" column="uid"/>
+        <result property="departId" column="depart_id"/>
+        <result property="performScore" column="perform_score"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <resultMap id="noticeMap" type="com.fzn.pesystem.common.entities.Notice">
+        <id property="noticeId" column="notice_id"/>
+        <result property="noticeTitle" column="notice_title"/>
+        <result property="noticeInfo" column="notice_info"/>
+        <result property="noticeAttachmentsUrl" column="notice_attachments_url"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <resultMap id="taskStatusMap" type="com.fzn.pesystem.common.entities.TaskStatus">
+        <id property="taskStatusId" column="task_status_id"/>
+        <result property="caseId" column="case_id"/>
+        <result property="teamId" column="team_id"/>
+        <result property="taskCompletionTime" column="task_completion_time"/>
+        <result property="taskCompletionInfo" column="task_completion_info"/>
+        <result property="taskCompletionAttachmentsUrl" column="task_completion_attachments_url"/>
+        <result property="taskScore" column="task_score"/>
+        <result property="taskStatus" column="task_status"/>
+        <result property="isRecruiting" column="is_ecruiting"/>
+    </resultMap>
+
+    <resultMap id="subTasksMap" type="com.fzn.pesystem.common.entities.Subtasks">
+        <id property="subtasksId" column="subtasks_id"/>
+        <result property="teamId" column="team_id"/>
+        <result property="uid" column="uid"/>
+        <result property="subtasksDesciption" column="subtasks_desciption"/>
+        <result property="subtasksAttachmentsUrl" column="subtasks_attachments_url"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="weights" column="weights"/>
+        <result property="isSubmit" column="is_submit"/>
+        <result property="isCompleted" column="is_completed"/>
+    </resultMap>
+
+    <sql id="departAll">
+        depart_id, parent_depart_id, depart_name, depart_info, depart_address, depart_admin_id
+    </sql>
+
+    <sql id="perfromAll">
+        perform_id, uid, depart_id, perform_score, update_time
+    </sql>
+
+    <sql id="userAll">
+        uid, password, name, phone, depart_id, top_depart_id, score
+    </sql>
+
+    <sql id="noticeAll">
+        notice_id, notice_title, notice_info, notice_attachments_url, update_time
+    </sql>
+    <select id="getAllDepart" resultMap="departMap">
+        SELECT
+            <include refid="departAll"></include>
+        FROM t_depart;
+    </select>
+
+    <select id="getDepartByDepartId" parameterType="java.lang.Integer"
+            resultMap="departMap">
+        select
+        <include refid="departAll"></include>
+        from t_depart td
+        where depart_id =#{departId}
+    </select>
+
+    <select id="getUserByDepartId" parameterType="java.lang.Integer"
+            resultMap="userMap">
+        select
+        uid,name, phone, depart_id, top_depart_id, score
+        from t_user tu
+        where depart_id =#{departId}
+    </select>
+    
+    <update id="upDateDepartByDepartId" parameterType="com.fzn.pesystem.common.entities.Depart">
+        UPDATE t_depart
+        SET depart_name=#{departName},
+            depart_info=#{departInfo},
+            depart_address=#{departAddress},
+            depart_admin_id=#{departAdminId}
+        WHERE depart_id=#{departId};
+    </update>
+
+    <select id="getListPersonalByUid" parameterType="java.lang.Integer"
+            resultMap="perfromMap">
+        SELECT
+        <include refid="perfromAll"></include>
+        FROM t_perform
+        where uid=#{uid}
+    </select>
+
+    <insert id="insertNotice" parameterType="com.fzn.pesystem.common.entities.Notice">
+        INSERT INTO t_notice
+        (
+        <include refid="noticeAll"></include>
+        )
+        VALUES(#{noticeId}, #{noticeTitle}, #{noticeInfo}, #{noticeAttachmentsUrl},#{updateTime});
+    </insert>
+    
+    <select id="getAllNotice" resultMap="noticeMap">
+        select 
+        <include refid="noticeAll"></include>
+        from t_notice tn
+    </select>
+    
+    <select id="getNoticeByDate" parameterType="Date"
+            resultMap="noticeMap">
+        select
+        <include refid="noticeAll"></include>
+        from t_notice tn
+        where update_time &lt;= #{date}
+    </select>
+
+    <!-- 定时统计功能DAO   -->
+    <select id="getAllUser" resultMap="userMap">
+        select
+        uid,name, phone, depart_id, top_depart_id, score
+        from t_user tu
+    </select>
+
+    <select id="getAllFinishTask" resultMap="taskStatusMap">
+        SELECT
+        task_status_id, team_id, task_score
+        FROM t_task_status
+        WHERE task_completion_time &gt;#{startDate}
+        and task_completion_time &lt;#{date}
+        and task_status='completed'
+    </select>
+
+    <select id="getAllSubtasksByTeamId" resultMap="subTasksMap">
+        SELECT subtasks_id, uid, weights, is_completed
+        FROM t_subtasks
+        where team_id = #{teamId}
+    </select>
+
+    <insert id="insertPerform">
+        INSERT INTO t_perform
+        (uid, depart_id, perform_score, update_time, `type`)
+        VALUES(#{uid}, #{departId}, #{performScore}, #{updateTime}, #{Type})
+    </insert>
+
+    <update id="upDateUserScore">
+        UPDATE pesystem.t_user
+        SET score=#{v}
+        WHERE uid=#{uid}
+    </update>
+</mapper>

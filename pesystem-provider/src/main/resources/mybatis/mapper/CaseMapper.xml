@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis3.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fzn.pesystem.provider.dao.ICaseDao">
+    <resultMap id="caseMap" type="com.fzn.pesystem.common.entities.Case">
+        <id property="caseId" column="case_id"/>
+        <result property="caseTypeId" column="case_type_id"/>
+        <result property="caseTypeName" column="case_type_name"/>
+        <result property="caseInfo" column="case_info"/>
+        <result property="caseAttachmentsUrl" column="case_attachments_url"/>
+        <result property="caseUpdateTime" column="case_update_time"/>
+        <result property="caseStatus" column="case_status"/>
+        <result property="reviewTime" column="review_time"/>
+    </resultMap>
+    <resultMap id="caseTypeMap" type="com.fzn.pesystem.common.entities.CaseType">
+        <id property="caseTypeId" column="case_type_id"/>
+        <result property="caseTypeName" column="case_type_name"/>
+        <result property="caseTypeInfo" column="case_type_info"/>
+        <result property="estimatedScore" column="estimated_score"/>
+    </resultMap>
+    <resultMap id="taskStatusMap" type="com.fzn.pesystem.common.entities.TaskStatus">
+        <id property="taskStatusId" column="task_status_id"/>
+        <result property="caseId" column="case_id"/>
+        <result property="teamId" column="team_id"/>
+        <result property="taskCompletionTime" column="task_completion_time"/>
+        <result property="taskCompletionInfo" column="task_completion_info"/>
+        <result property="taskCompletionAttachmentsUrl" column="task_completion_attachments_url"/>
+        <result property="taskScore" column="task_score"/>
+        <result property="taskStatus" column="task_status"/>
+        <result property="isRecruiting" column="is_recruiting"/>
+    </resultMap>
+    <resultMap id="teamMap" type="com.fzn.pesystem.common.entities.Team">
+        <id property="teamId" column="team_id"/>
+        <id property="uid" column="uid"/>
+        <result property="userType" column="user_type"/>
+    </resultMap>
+    <resultMap id="subtasksMap" type="com.fzn.pesystem.common.entities.Subtasks">
+        <id property="subtasksId" column="subtasks_id"/>
+        <result property="teamId" column="team_id"/>
+        <result property="uid" column="uid"/>
+        <result property="subtasksDesciption" column="subtasks_desciption"/>
+        <result property="subtasksAttachmentsUrl" column="subtasks_attachments_url"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="weights" column="weights"/>
+        <result property="isSubmit" column="is_submit"/>
+        <result property="isCompleted" column="is_completed"/>
+    </resultMap>
+    <resultMap id="completionMap" type="com.fzn.pesystem.common.entities.Completion">
+        <id property="completionId" column="completion_id"/>
+        <result property="subtasksId" column="subtasks_id"/>
+        <result property="uid" column="uid"/>
+        <result property="completionInfo" column="completion_info"/>
+        <result property="completionVideoUrl" column="completion_video_url"/>
+        <result property="completionAttachmentsUrl" column="completion_attachments_url"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+    
+    <insert id="addCase">
+        INSERT INTO t_case
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="caseTypeId!=null">case_type_id,</if>
+            <if test="caseTypeName!=null">case_type_name,</if>
+            <if test="caseInfo!=null">case_info,</if>
+            <if test="caseAttachmentsUrl!=null">case_attachments_url,</if>
+            <if test="caseUpdateTime!=null">case_update_time,</if>
+            <if test="caseStatus!=null">case_status,</if>
+            <if test="reviewTime!=null">review_time,</if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="caseTypeId!=null">#{caseTypeId},</if>
+            <if test="caseTypeName!=null">#{caseTypeName},</if>
+            <if test="caseInfo!=null">#{caseInfo},</if>
+            <if test="caseAttachmentsUrl!=null">#{caseAttachmentsUrl},</if>
+            <if test="caseUpdateTime!=null">#{caseUpdateTime},</if>
+            <if test="caseStatus!=null">#{caseStatus},</if>
+            <if test="reviewTime!=null">#{reviewTime},</if>
+        </trim>
+    </insert>
+
+    <insert id="createTeam">
+        INSERT INTO t_team
+        (uid,user_type)
+        VALUES
+        (#{uid},#{userType})
+    </insert>
+
+    <insert id="createTaskStatus">
+        INSERT INTO t_task_status
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="caseId!=null">case_id,</if>
+            <if test="teamId!=null">team_id,</if>
+            <if test="taskCompletionTime!=null">task_completion_time,</if>
+            <if test="taskCompletionInfo!=null">task_completion_info,</if>
+            <if test="taskCompletionAttachmentsUrl!=null">task_completion_attachments_url,</if>
+            <if test="taskScore!=null">task_score,</if>
+            <if test="taskStatus!=null">task_status,</if>
+            <if test="isRecruiting!=null">is_recruiting,</if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="caseId!=null">#{caseId},</if>
+            <if test="teamId!=null">#{teamId},</if>
+            <if test="taskCompletionTime!=null">#{taskCompletionTime},</if>
+            <if test="taskCompletionInfo!=null">#{taskCompletionInfo},</if>
+            <if test="taskCompletionAttachmentsUrl!=null">#{taskCompletionAttachmentsUrl},</if>
+            <if test="taskScore!=null">#{taskScore},</if>
+            <if test="taskStatus!=null">#{taskStatus},</if>
+            <if test="isRecruiting!=null">#{isRecruiting},</if>
+        </trim>
+    </insert>
+
+    <insert id="addToTeam">
+        INSERT INTO t_team
+        (team_id,uid,user_type)
+        VALUES
+        (#{teamId},#{uid},#{userType})
+    </insert>
+
+    <insert id="addSubtasks">
+        INSERT INTO t_subtasks
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="teamId!=null">team_id,</if>
+            <if test="uid!=null">uid,</if>
+            <if test="subtasksDesciption!=null">subtasks_desciption,</if>
+            <if test="subtasksAttachmentsUrl!=null">subtasks_attachments_url,</if>
+            <if test="updateTime!=null">update_time,</if>
+            <if test="weights!=null">weights,</if>
+            <if test="isSubmit!=null">is_submit,</if>
+            <if test="isCompleted!=null">is_completed,</if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="teamId!=null">#{teamId},</if>
+            <if test="uid!=null">#{uid},</if>
+            <if test="subtasksDesciption!=null">#{subtasksDesciption},</if>
+            <if test="subtasksAttachmentsUrl!=null">#{subtasksAttachmentsUrl},</if>
+            <if test="updateTime!=null">#{updateTime},</if>
+            <if test="weights!=null">#{weights},</if>
+            <if test="isSubmit!=null">#{isSubmit},</if>
+            <if test="isCompleted!=null">#{isCompleted},</if>
+        </trim>
+    </insert>
+
+    <insert id="submitTackResult">
+        INSERT INTO t_completion
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="subtasksId!=null">subtasks_id,</if>
+            <if test="uid!=null">uid,</if>
+            <if test="completionInfo!=null">completion_info,</if>
+            <if test="completionVideoUrl!=null">completion_video_url,</if>
+            <if test="completionAttachmentsUrl!=null">completion_attachments_url,</if>
+            <if test="updateTime!=null">update_time,</if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="subtasksId!=null">#{subtasksId},</if>
+            <if test="uid!=null">#{uid},</if>
+            <if test="completionInfo!=null">#{completionInfo},</if>
+            <if test="completionVideoUrl!=null">#{completionVideoUrl},</if>
+            <if test="completionAttachmentsUrl!=null">#{completionAttachmentsUrl},</if>
+            <if test="updateTime!=null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <insert id="completeTackResult">
+        INSERT INTO t_completion
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="subtasksId!=null">subtasks_id,</if>
+            <if test="uid!=null">uid,</if>
+            <if test="completionInfo!=null">completion_info,</if>
+            <if test="completionVideoUrl!=null">completion_video_url,</if>
+            <if test="completionAttachmentsUrl!=null">completion_attachments_url,</if>
+            <if test="updateTime!=null">update_time,</if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="subtasksId!=null">#{subtasksId},</if>
+            <if test="uid!=null">#{uid},</if>
+            <if test="completionInfo!=null">#{completionInfo},</if>
+            <if test="completionVideoUrl!=null">#{completionVideoUrl},</if>
+            <if test="completionAttachmentsUrl!=null">#{completionAttachmentsUrl},</if>
+            <if test="updateTime!=null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateCaseStatue">
+        UPDATE t_case
+        <set>
+            case_status=#{caseStatus},review_time=#{reviewTime}
+        </set>
+        <where>
+            case_id=#{caseId}
+        </where>
+    </update>
+
+    <update id="updateIsRecruiting">
+        UPDATE t_task_status
+        <set>
+            is_recruiting=#{isRecruiting}
+        </set>
+        <where>
+            task_status_id =#{taskStatusId}
+        </where>
+    </update>
+
+    <update id="updateIsSubmit">
+        UPDATE t_subtasks
+        <set>
+            is_submit=#{isSubmit}
+        </set>
+        <where>
+            subtasks_id=#{subtasksId}
+        </where>
+    </update>
+
+    <update id="updateIsCompleted">
+        UPDATE t_subtasks
+        <set>
+            is_completed=#{isCompleted}
+        </set>
+        <where>
+            subtasks_id=#{subtasksId}
+        </where>
+    </update>
+
+    <update id="updateTaskStatus">
+        UPDATE t_task_status
+        <set>
+            <if test="caseId!=null">case_id=#{caseId},</if>
+            <if test="teamId!=null">team_id=#{teamId},</if>
+            <if test="taskCompletionTime!=null">task_completion_time=#{taskCompletionTime},</if>
+            <if test="taskCompletionInfo!=null">task_completion_info=#{taskCompletionInfo},</if>
+            <if test="taskCompletionAttachmentsUrl!=null">task_completion_attachments_url=#{taskCompletionAttachmentsUrl},</if>
+            <if test="taskScore!=null">task_score=#{taskScore},</if>
+            <if test="taskStatus!=null">task_status=#{taskStatus},</if>
+            <if test="isRecruiting!=null">is_recruiting=#{isRecruiting}</if>
+        </set>
+        <where>
+            task_status_id=#{taskStatusId}
+        </where>
+    </update>
+
+    <update id="updateTaskStatusStatus">
+        UPDATE t_task_status
+        <set>
+            task_status=#{taskStatus}
+        </set>
+        <where>
+            task_status_id=#{taskStatusId}
+        </where>
+    </update>
+
+    <update id="updateSubTasks">
+        UPDATE t_subtasks
+        <set>
+            <if test="teamId!=null">team_id=#{teamId},</if>
+            <if test="uid!=null">uid=#{uid},</if>
+            <if test="subtasksDesciption!=null">subtasks_desciption=#{subtasksDesciption},</if>
+            <if test="subtasksAttachmentsUrl!=null">subtasks_attachments_url=#{subtasksAttachmentsUrl},</if>
+            <if test="updateTime!=null">update_time=#{updateTime},</if>
+            <if test="weights!=null">weights=#{weights},</if>
+            <if test="isSubmit!=null">is_submit=#{isSubmit},</if>
+            <if test="isCompleted!=null">is_completed=#{isCompleted}</if>
+        </set>
+        <where>
+            subtasks_id=#{subtasksId}
+        </where>
+    </update>
+
+    <delete id="deleteSubTask">
+        DELETE FROM t_subtasks
+        <where>
+            subtasks_id=#{subtasksId}
+        </where>
+    </delete>
+
+
+    <select id="getCaseType" resultMap="caseTypeMap">
+        SELECT * FROM t_case_type;
+    </select>
+
+    <select id="getCase" resultMap="caseMap">
+        SELECT * FROM t_case ORDER BY case_id DESC;
+    </select>
+
+    <select id="getCaseStatus" resultType="java.lang.String">
+        SELECT case_status FROM t_case
+        <where>
+            case_id=#{caseId}
+        </where>
+    </select>
+
+    <select id="getUserType" resultType="java.lang.String">
+        SELECT user_type FROM t_team
+        <where>
+            team_id=#{teamId} and uid=#{uid}
+        </where>
+    </select>
+
+    <select id="getOpenTask" resultMap="taskStatusMap">
+        SELECT * FROM t_task_status
+        <where>
+            is_recruiting=1
+        </where>
+    </select>
+
+    <select id="getIsRecruiting" resultType="java.lang.Integer">
+        SELECT is_recruiting FROM t_task_status
+        <where>
+          task_status_id=#{taskStatusId}
+        </where>
+    </select>
+    <select id="getTeamId" resultType="java.lang.Integer">
+        SELECT team_id FROM t_task_status
+        <where>
+            task_status_id=#{taskStatusId}
+        </where>
+    </select>
+
+    <select id="getSelfUnDoneSubtasks" resultMap="subtasksMap">
+        SELECT * FROM t_subtasks
+        <where>
+            uid=#{uid}
+            AND
+            is_completed=#{isCompleted}
+        </where>
+    </select>
+
+    <select id="getTeamUnDoneSubtasks" resultMap="subtasksMap">
+        SELECT * FROM t_subtasks
+        <where>
+            team_id=#{teamId}
+            AND
+            is_completed=#{isCompleted}
+        </where>
+    </select>
+
+    <select id="getMaxCaseId" resultType="java.lang.Integer">
+        SELECT max(case_id) FROM t_case
+    </select>
+
+    <select id="getMaxTaskStatusId" resultType="java.lang.Integer">
+        SELECT max(task_status_id) FROM t_task_status
+    </select>
+
+    <select id="getMaxTeamId" resultType="java.lang.Integer">
+        SELECT max(team_id) FROM t_team
+    </select>
+
+    <select id="getMaxSubtasksId" resultType="java.lang.Integer">
+        SELECT max(subtasks_id) FROM t_subtasks
+    </select>
+
+    <select id="getMaxCompletionId" resultType="java.lang.Integer">
+        SELECT max(completion_id) FROM t_completion
+    </select>
+
+    <select id="getTaskStatus" resultMap="taskStatusMap">
+        SELECT * FROM t_task_status
+        <where>
+            case_id=#{caseId}
+        </where>
+    </select>
+
+    <select id="getTaskStatusStatus" resultType="java.lang.String">
+        SELECT task_status FROM t_task_status
+        <where>
+            task_status_id=#{taskStatusId}
+        </where>
+    </select>
+
+    <select id="getSubTeamId" resultType="java.lang.Integer">
+        SELECT team_id FROM t_subtasks
+        <where>
+            subtasks_id=#{subtasksId}
+        </where>
+    </select>
+    <select id="getTeamUnDoneSubtasksById" resultMap="subtasksMap">
+        SELECT * FROM t_subtasks
+        <where>
+            team_id=#{teamId}
+            AND
+            uid=#{uid}
+            AND
+            is_completed=#{isCompleted}
+        </where>
+    </select>
+
+    <select id="getHasUidInTeam" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM t_team
+        <where>
+            team_id=#{teamId}
+            AND
+            uid=#{uid}
+        </where>
+    </select>
+
+
+</mapper>
